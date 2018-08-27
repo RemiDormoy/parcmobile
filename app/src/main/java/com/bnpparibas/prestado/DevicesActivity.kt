@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,7 +31,6 @@ class DevicesActivity : AppCompatActivity(), PhonesView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_devices)
-        presenter.load()
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
         setTitle("Liste des devices")
@@ -44,6 +42,7 @@ class DevicesActivity : AppCompatActivity(), PhonesView {
             }
             false
         }
+        presenter.load()
     }
 
     override fun displayPhones(phones: List<Phone>) {
@@ -56,8 +55,7 @@ class PhonePresenter(
     private val view: PhonesView
 ) {
     fun load() {
-        val phones = phoneRepository.getPhones()
-        displayPhones(phones)
+        phoneRepository.getPhones(::displayPhones)
     }
 
     private fun displayPhones(phones: List<Phone>) {
@@ -75,7 +73,7 @@ class PhonesAdapter : RecyclerView.Adapter<PhonesViewHolder>() {
     private var list = listOf<Phone>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhonesViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.cell_device, parent)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.cell_device, parent, false)
         return PhonesViewHolder(view)
     }
 
