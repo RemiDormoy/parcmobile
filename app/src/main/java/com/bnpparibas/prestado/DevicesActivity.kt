@@ -22,7 +22,7 @@ class DevicesActivity : AppCompatActivity(), PhonesView {
         findViewById<RecyclerView>(R.id.phonesRecyclerView)
     }
 
-    private val adapter = PhonesAdapter()
+    private val adapter = PhonesAdapter(::addPhoneClick)
 
     companion object {
         fun newIntent(context: Context) = Intent(context, DevicesActivity::class.java)
@@ -48,6 +48,10 @@ class DevicesActivity : AppCompatActivity(), PhonesView {
     override fun displayPhones(phones: List<Phone>) {
         adapter.updateList(phones)
     }
+
+    private fun addPhoneClick(){
+        startActivity(Intent(this, AddDeviceActivity::class.java))
+    }
 }
 
 class PhonePresenter(
@@ -68,22 +72,40 @@ interface PhonesView {
     fun displayPhones(phones: List<Phone>)
 }
 
-class PhonesAdapter : RecyclerView.Adapter<PhonesViewHolder>() {
+class PhonesAdapter(private val addPhoneClick: () -> Unit) : RecyclerView.Adapter<PhonesViewHolder>() {
 
     private var list = listOf<Phone>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhonesViewHolder {
+        if (viewType == 25) {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.button_add_device,
+                parent,
+                false)
+            return PhonesViewHolder(view)
+        }
         val view = LayoutInflater.from(parent.context).inflate(R.layout.cell_device, parent, false)
         return PhonesViewHolder(view)
     }
 
+    override fun getItemViewType(position: Int): Int {
+        if (position == list.size) return 25
+        return super.getItemViewType(position)
+    }
+
     override fun getItemCount(): Int {
+        if (list.isNotEmpty()) {
+            return list.size + 1
+        }
         return list.size
     }
 
     override fun onBindViewHolder(holder: PhonesViewHolder, position: Int) {
-        holder.itemView.findViewById<TextView>(R.id.deviceName).text = list[position].name
-        holder.itemView.findViewById<TextView>(R.id.deviceOs).text = list[position].os
+        if (position == list.size) {
+            holder.itemView.setOnClickListener { addPhoneClick() }
+        } else {
+            holder.itemView.findViewById<TextView>(R.id.deviceName).text = list[position].name
+            holder.itemView.findViewById<TextView>(R.id.deviceOs).text = list[position].os
+        }
     }
 
     fun updateList(list: List<Phone>) {
