@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/action_scann"
+        android:icon="@drawable/ic_speaker_phone_black_24dp"
+        android:iconTint="@color/colorAccent"
+        android:title="Scanner" />
+    <item
         android:id="@+id/action_navigation"
         android:icon="@drawable/ic_device"
+        android:iconTint="@color/colorAccent"
         android:title="Devices" />
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_account_circle_black_24dp"
+        android:iconTint="@color/colorAccent"
         android:title="Utilisateurs" />
-    <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/ic_settings"
-        android:title="Paramètres" />
 </menu>

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_devices.*
 import kotlin.reflect.KFunction1
 
 class UsersActivity : AppCompatActivity(), UsersView {
@@ -38,6 +39,16 @@ class UsersActivity : AppCompatActivity(), UsersView {
         presenter.load()
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
+        setTitle("Liste des users")
+
+        bottomNavigationView.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                //R.id.action_settings -> startActivity(UsersActivity.newIntent(this))
+                R.id.action_navigation -> startActivity(DevicesActivity.newIntent(this))
+                R.id.action_scann -> onBackPressed()
+            }
+            false
+        }
     }
 
     override fun displayUsers(users: List<Users>) {
