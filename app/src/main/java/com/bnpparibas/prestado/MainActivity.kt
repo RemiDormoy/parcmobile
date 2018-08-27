@@ -1,13 +1,10 @@
 package com.bnpparibas.prestado
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MenuItem
 import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
-import com.google.firebase.firestore.FirebaseFirestore
+import androidx.appcompat.app.AppCompatActivity
 import com.google.zxing.Result
-import kotlinx.android.synthetic.main.activity_main.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 
 
@@ -29,6 +26,7 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, MainVi
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.action_settings -> startActivity(UsersActivity.newIntent(this))
+                R.id.action_navigation -> startActivity(DevicesActivity.newIntent(this))
             }
             true
         }
@@ -54,51 +52,51 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, MainVi
 
     override fun displayTelNotFound() {
         AlertDialog.Builder(this)
-                .setTitle("Désolé")
-                .setMessage("Nous ne trouvons pas de téléphone associé à ce code barre")
-                .setPositiveButton("Fermer") { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                    scannerView.resumeCameraPreview(this)
-                }
-                .show()
+            .setTitle("Désolé")
+            .setMessage("Nous ne trouvons pas de téléphone associé à ce code barre")
+            .setPositiveButton("Fermer") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                scannerView.resumeCameraPreview(this)
+            }
+            .show()
     }
 
     override fun displayGiveBackPop(id: String, name: String) {
         AlertDialog.Builder(this)
-                .setTitle("Téléphone emprunté")
-                .setMessage("Voulez vous rendre ce téléphone : $name")
-                .setPositiveButton("Valider") { dialogInterface, _ ->
-                    presenter.giveBack(id)
-                    dialogInterface.dismiss()
-                    scannerView.resumeCameraPreview(this)
-                }
-                .setNegativeButton("Annuler") { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                    scannerView.resumeCameraPreview(this)
-                }
-                .show()
+            .setTitle("Téléphone emprunté")
+            .setMessage("Voulez vous rendre ce téléphone : $name")
+            .setPositiveButton("Valider") { dialogInterface, _ ->
+                presenter.giveBack(id)
+                dialogInterface.dismiss()
+                scannerView.resumeCameraPreview(this)
+            }
+            .setNegativeButton("Annuler") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                scannerView.resumeCameraPreview(this)
+            }
+            .show()
     }
 
     override fun displayBorrow(id: String, name: String) {
         AlertDialog.Builder(this)
-                .setTitle("Téléphone libre")
-                .setMessage("Voulez vous emprunter ce téléphone : $name")
-                .setPositiveButton("Valider") { dialogInterface, _ ->
-                    presenter.borrowPhone(id)
-                    dialogInterface.dismiss()
-                    scannerView.resumeCameraPreview(this)
-                }
-                .setNegativeButton("Annuler") { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                    scannerView.resumeCameraPreview(this)
-                }
-                .show()
+            .setTitle("Téléphone libre")
+            .setMessage("Voulez vous emprunter ce téléphone : $name")
+            .setPositiveButton("Valider") { dialogInterface, _ ->
+                presenter.borrowPhone(id)
+                dialogInterface.dismiss()
+                scannerView.resumeCameraPreview(this)
+            }
+            .setNegativeButton("Annuler") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                scannerView.resumeCameraPreview(this)
+            }
+            .show()
     }
 }
 
 class MainPresenter(
-        private val view: MainView,
-        private val phoneRepository: PhoneRepository) {
+    private val view: MainView,
+    private val phoneRepository: PhoneRepository) {
 
     fun changePhoneStatus(id: String) {
         try {
@@ -139,18 +137,18 @@ class PhoneRepository {
     init {
         val collection = strore.collection("devices")
         collection.get()
-                .addOnSuccessListener {
-                    values = it.map {
-                        transformToPhone(it.data, it.id)
-                    }
+            .addOnSuccessListener {
+                values = it.map {
+                    transformToPhone(it.data, it.id)
                 }
-                .addOnFailureListener {
-                    it.printStackTrace()
-                }
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+            }
     }
 
     private fun transformToPhone(data: Map<String, Any>, id: String): Phone {
-        return Phone(id, data.get("free") as Boolean, data.get("device") as String)
+        return Phone(id, data.get("free") as Boolean, data.get("device") as String, data.get("os") as String)
     }
 
     fun getPhones(): List<Phone> {
@@ -160,7 +158,8 @@ class PhoneRepository {
 }
 
 data class Phone(
-        val id: String,
-        val isBorrowed: Boolean,
-        val name: String
+    val id: String,
+    val isBorrowed: Boolean,
+        val name: String,
+        val os: String
 )

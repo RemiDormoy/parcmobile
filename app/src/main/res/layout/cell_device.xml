@@ -17,34 +17,70 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/deviceImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:background="@drawable/ic_device" />
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="8dp">
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="8dp">
 
-                <TextView
-                    android:id="@+id/deviceName"
+                <ImageView
+                    android:id="@+id/deviceImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="Samsung 9" />
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/ic_device" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/deviceName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="Samsung 9" />
+
+                    <TextView
+                        android:id="@+id/deviceOs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="OS" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="right"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/deviceOs"
+                    android:id="@+id/modifyButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="OS" />
+                    android:padding="8dp"
+                    android:text="Modifier"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorAccent" />
+
+                <TextView
+                    android:id="@+id/deleteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingStart="8dp"
+                    android:paddingTop="8dp"
+                    android:text="Supprimer"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorAccent" />
 
             </LinearLayout>
         </LinearLayout>
