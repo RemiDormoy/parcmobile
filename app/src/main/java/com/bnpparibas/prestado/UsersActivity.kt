@@ -36,7 +36,6 @@ class UsersActivity : AppCompatActivity(), UsersView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_users)
-        presenter.load()
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
         setTitle("Liste des users")
@@ -49,6 +48,11 @@ class UsersActivity : AppCompatActivity(), UsersView {
             }
             false
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.load()
     }
 
     override fun displayUsers(users: List<Users>) {
