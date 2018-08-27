@@ -112,11 +112,11 @@ class MainPresenter(
     }
 
     fun giveBack(id: String) {
-
+        phoneRepository.giveBack(id)
     }
 
     fun borrowPhone(id: String) {
-
+        phoneRepository.borrow(id)
     }
 
     fun init() {
@@ -153,6 +153,11 @@ class PhoneRepository {
 
     fun getPhones(): List<Phone> {
         return values
+    }
+
+    fun giveBack(id: String) {
+        val collection = strore.collection("devices")
+        collection.
     }
 
 }
