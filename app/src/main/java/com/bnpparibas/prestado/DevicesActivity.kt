@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_devices.*
 
 class DevicesActivity : AppCompatActivity(), PhonesView {
 
@@ -34,6 +34,7 @@ class DevicesActivity : AppCompatActivity(), PhonesView {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
         setTitle("Liste des devices")
+        addDeviceButton.setOnClickListener { addPhoneClick() }
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.action_settings -> startActivity(UsersActivity.newIntent(this))
@@ -93,9 +94,6 @@ class PhonesAdapter(private val addPhoneClick: () -> Unit) : RecyclerView.Adapte
     }
 
     override fun getItemCount(): Int {
-        if (list.isNotEmpty()) {
-            return list.size + 1
-        }
         return list.size
     }
 
@@ -105,6 +103,7 @@ class PhonesAdapter(private val addPhoneClick: () -> Unit) : RecyclerView.Adapte
         } else {
             holder.itemView.findViewById<TextView>(R.id.deviceName).text = list[position].name
             holder.itemView.findViewById<TextView>(R.id.deviceOs).text = list[position].os
+            holder.itemView.findViewById<TextView>(R.id.statusTextView).text = if (list[position].isBorrowed) "Déjà emprunté" else "libre"
         }
     }
 

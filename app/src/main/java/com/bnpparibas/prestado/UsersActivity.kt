@@ -13,8 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.activity_devices.*
-import kotlin.reflect.KFunction1
+import kotlinx.android.synthetic.main.activity_users.*
 
 class UsersActivity : AppCompatActivity(), UsersView {
 
@@ -39,6 +38,7 @@ class UsersActivity : AppCompatActivity(), UsersView {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
         setTitle("Liste des users")
+        addUserButton.setOnClickListener { addUser() }
 
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
@@ -141,9 +141,6 @@ class UsersAdpter(private val addUserClick: () -> Unit) : RecyclerView.Adapter<U
     }
 
     override fun getItemCount(): Int {
-        if (list.size > 0) {
-            return list.size + 1
-        }
         return list.size
     }
 
