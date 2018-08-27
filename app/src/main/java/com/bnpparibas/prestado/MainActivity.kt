@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.zxing.Result
+import kotlinx.android.synthetic.main.activity_main.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 
 
