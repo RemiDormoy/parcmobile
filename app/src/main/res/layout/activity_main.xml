@@ -36,7 +36,9 @@
         <FrameLayout
             android:id="@+id/scanViewContainer"
             android:layout_height="match_parent"
-            android:layout_width="match_parent"/>
+            android:layout_width="match_parent">
+
+        </FrameLayout>
 
 
     </androidx.cardview.widget.CardView>

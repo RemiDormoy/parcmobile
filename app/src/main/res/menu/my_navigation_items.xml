@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/action_search"
-        android:title="Configuration"
-        android:icon="@drawable/ic_settings" />
-    <item android:id="@+id/action_settings"
-        android:title="Ajouter utilisateur"
-        android:icon="@drawable/ic_add_user" />
-    <item android:id="@+id/action_navigation"
-        android:title="Ajouter un device"
-        android:icon="@drawable/ic_add_device" />
+    <item
+        android:id="@+id/action_navigation"
+        android:icon="@drawable/ic_device"
+        android:title="Devices" />
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:title="Utilisateurs" />
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_settings"
+        android:title="Paramètres" />
 </menu>
