@@ -1,9 +1,8 @@
-package com.example.octo.parcmobile
+package com.bnpparibas.prestado
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
@@ -102,11 +101,11 @@ class MainPresenter(
     }
 
     fun giveBack(id: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     fun borrowPhone(id: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 }
 

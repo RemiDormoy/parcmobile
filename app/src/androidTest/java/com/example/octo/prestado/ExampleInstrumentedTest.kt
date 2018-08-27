@@ -1,4 +1,4 @@
-package com.example.octo.parcmobile
+package com.bnpparibas.prestado
 
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4

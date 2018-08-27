@@ -1,4 +1,4 @@
-package com.example.octo.parcmobile
+package com.bnpparibas.prestado
 
 import org.junit.Test
 
