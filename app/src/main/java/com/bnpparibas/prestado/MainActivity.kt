@@ -1,8 +1,8 @@
 package com.bnpparibas.prestado
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.firestore.FirebaseFirestore
@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, MainVi
 
     private lateinit var scannerView: ZXingScannerView
     private val presenter: MainPresenter by lazy {
-        MainPresenter(this, PhoneRepository(this))
+        MainPresenter(this, PhoneRepository())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +32,13 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, MainVi
         scannerView.setResultHandler(this) // Register ourselves as a handler for scan results.
         scannerView.startCamera()
         presenter.init()// Start camera on resume
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_settings -> startActivity(UsersActivity.newIntent(this))
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     public override fun onPause() {
@@ -124,7 +131,7 @@ interface MainView {
     fun displayBorrow(id: String, name: String)
 }
 
-class PhoneRepository(private val context: Context) {
+class PhoneRepository {
 
     private val strore = FirebaseFirestore.getInstance()
     private lateinit var values: List<Phone>
@@ -150,12 +157,6 @@ class PhoneRepository(private val context: Context) {
         return values
     }
 
-    private fun doNothingWith(it: MutableMap<String, Any>) {
-        val id = it.get("id")
-        val name = it.get("name")
-        val free = it.get("free")
-        val zob = it.get("zob")
-    }
 }
 
 data class Phone(
