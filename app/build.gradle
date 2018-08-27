@@ -31,4 +31,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha3'
+
+    api 'me.dm7.barcodescanner:zxing:1.9.8'
+    implementation 'com.google.android.material:material:1.0.0-rc01'
 }
