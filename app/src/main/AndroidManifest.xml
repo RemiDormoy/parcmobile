@@ -22,6 +22,7 @@
         <activity android:name=".UsersActivity"/>
         <activity android:name=".DevicesActivity"/>
         <activity android:name=".AddUserActivity"/>
+        <activity android:name=".AddDeviceActivity"/>
     </application>
 
 </manifest>
