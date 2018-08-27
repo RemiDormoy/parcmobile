@@ -20,6 +20,7 @@
         </activity>
 
         <activity android:name=".UsersActivity"/>
+        <activity android:name=".DevicesActivity"/>
     </application>
 
 </manifest>
