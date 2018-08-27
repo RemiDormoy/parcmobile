@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlin.reflect.KFunction1
 
@@ -66,7 +67,8 @@ class UsersRepository {
     private val strore = FirebaseFirestore.getInstance()
 
     private fun transformToUser(data: Map<String, Any>, id: String): Users {
-        return Users(id, data.get("name") as String, data.get("roles.id") as String)
+        val level = data.get("roles.id") as Long?
+        return Users(id, data.get("name") as String, level.toLabel())
     }
 
     fun getUsers(callback: (List<Users>) -> Unit) {
@@ -84,6 +86,17 @@ class UsersRepository {
 
 }
 
+private fun Long?.toLabel(): String {
+    this?.toInt()?.let {
+        return when (it) {
+            1 -> "Administrateur"
+            2 -> "Gestionnaire"
+            else -> "Emprunteur"
+        }
+    }
+    return "Emprunteur"
+}
+
 data class Users(
         val id: String,
         val name: String,
@@ -95,7 +108,7 @@ class UsersAdpter : RecyclerView.Adapter<UsersViewHolder>() {
     private var list = listOf<Users>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsersViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.cell_user_item, parent)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.cell_user_item, parent, false)
         return UsersViewHolder(view)
     }
 

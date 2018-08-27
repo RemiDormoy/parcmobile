@@ -7,6 +7,7 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.zxing.Result
+import kotlinx.android.synthetic.main.activity_main.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 
 
@@ -25,6 +26,12 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, MainVi
         val container = findViewById<FrameLayout>(R.id.scanViewContainer)
         container.removeAllViews()
         container.addView(scannerView)
+        bottomNavigationView.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.action_settings -> startActivity(UsersActivity.newIntent(this))
+            }
+            true
+        }
     }
 
     public override fun onResume() {
@@ -32,13 +39,6 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, MainVi
         scannerView.setResultHandler(this) // Register ourselves as a handler for scan results.
         scannerView.startCamera()
         presenter.init()// Start camera on resume
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_settings -> startActivity(UsersActivity.newIntent(this))
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     public override fun onPause() {
