@@ -106,8 +106,12 @@ class MainPresenter(
         private val phoneRepository: PhoneRepository) {
 
     fun changePhoneStatus(id: String) {
+        val phones = phoneRepository.getPhones(id, ::loadPopUp)
+    }
+
+    private fun loadPopUp(phones: List<Phone>, id: String) {
         try {
-            val phone = phoneRepository.getPhones().first { it.id == id }
+            val phone = phones.first { it.id == id }
             if (phone.isBorrowed) {
                 view.displayGiveBackPop(phone.id, phone.name)
             } else {
@@ -144,27 +148,35 @@ interface MainView {
 class PhoneRepository {
 
     private val strore = FirebaseFirestore.getInstance()
-    private lateinit var values: List<Phone>
 
-    init {
+    private fun transformToPhone(data: Map<String, Any>, id: String): Phone {
+        return Phone(id, !(data.get("free") as Boolean), data.get("device") as String, data.get("os") as String)
+    }
+
+    fun getPhones(id: String, callback: (List<Phone>, String) -> Unit) {
         val collection = strore.collection("devices")
         collection.get()
                 .addOnSuccessListener {
-                    values = it.map {
+                    callback(it.map {
                         transformToPhone(it.data, it.id)
-                    }
+                    }, id)
                 }
                 .addOnFailureListener {
                     it.printStackTrace()
                 }
     }
 
-    private fun transformToPhone(data: Map<String, Any>, id: String): Phone {
-        return Phone(id, !(data.get("free") as Boolean), data.get("device") as String, data.get("os") as String)
-    }
-
-    fun getPhones(): List<Phone> {
-        return values
+    fun getPhones(callback: (List<Phone>) -> Unit) {
+        val collection = strore.collection("devices")
+        collection.get()
+                .addOnSuccessListener {
+                    callback(it.map {
+                        transformToPhone(it.data, it.id)
+                    })
+                }
+                .addOnFailureListener {
+                    it.printStackTrace()
+                }
     }
 
     fun giveBack(id: String, callback: () -> Unit) {

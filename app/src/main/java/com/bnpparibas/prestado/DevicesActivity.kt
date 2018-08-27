@@ -45,8 +45,7 @@ class PhonePresenter(
     private val view: PhonesView
 ) {
     fun load() {
-        val phones = phoneRepository.getPhones()
-        displayPhones(phones)
+        val phones = phoneRepository.getPhones(::displayPhones)
     }
 
     private fun displayPhones(phones: List<Phone>) {
