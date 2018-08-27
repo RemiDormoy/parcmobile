@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
@@ -148,6 +149,7 @@ interface MainView {
     fun displayTelNotFound()
     fun displayGiveBackPop(id: String, name: String)
     fun displayBorrow(id: String, name: String)
+    fun onCompleted()
 }
 
 class PhoneRepository {
