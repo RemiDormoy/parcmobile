@@ -59,7 +59,7 @@ class AddUserActivity : AppCompatActivity(), AddUserView {
         if (view == null) {
             view = View(this)
         }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0)
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
 
