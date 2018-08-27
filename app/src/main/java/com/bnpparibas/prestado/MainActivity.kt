@@ -2,6 +2,7 @@ package com.bnpparibas.prestado
 
 import android.os.Bundle
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
@@ -54,51 +55,55 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, MainVi
 
     override fun displayTelNotFound() {
         AlertDialog.Builder(this)
-            .setTitle("Désolé")
-            .setMessage("Nous ne trouvons pas de téléphone associé à ce code barre")
-            .setPositiveButton("Fermer") { dialogInterface, _ ->
-                dialogInterface.dismiss()
-                scannerView.resumeCameraPreview(this)
-            }
-            .show()
+                .setTitle("Désolé")
+                .setMessage("Nous ne trouvons pas de téléphone associé à ce code barre")
+                .setPositiveButton("Fermer") { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                    scannerView.resumeCameraPreview(this)
+                }
+                .show()
     }
 
     override fun displayGiveBackPop(id: String, name: String) {
         AlertDialog.Builder(this)
-            .setTitle("Téléphone emprunté")
-            .setMessage("Voulez vous rendre ce téléphone : $name")
-            .setPositiveButton("Valider") { dialogInterface, _ ->
-                presenter.giveBack(id)
-                dialogInterface.dismiss()
-                scannerView.resumeCameraPreview(this)
-            }
-            .setNegativeButton("Annuler") { dialogInterface, _ ->
-                dialogInterface.dismiss()
-                scannerView.resumeCameraPreview(this)
-            }
-            .show()
+                .setTitle("Téléphone emprunté")
+                .setMessage("Voulez vous rendre ce téléphone : $name")
+                .setPositiveButton("Valider") { dialogInterface, _ ->
+                    presenter.giveBack(id)
+                    dialogInterface.dismiss()
+                    scannerView.resumeCameraPreview(this)
+                }
+                .setNegativeButton("Annuler") { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                    scannerView.resumeCameraPreview(this)
+                }
+                .show()
     }
 
     override fun displayBorrow(id: String, name: String) {
         AlertDialog.Builder(this)
-            .setTitle("Téléphone libre")
-            .setMessage("Voulez vous emprunter ce téléphone : $name")
-            .setPositiveButton("Valider") { dialogInterface, _ ->
-                presenter.borrowPhone(id)
-                dialogInterface.dismiss()
-                scannerView.resumeCameraPreview(this)
-            }
-            .setNegativeButton("Annuler") { dialogInterface, _ ->
-                dialogInterface.dismiss()
-                scannerView.resumeCameraPreview(this)
-            }
-            .show()
+                .setTitle("Téléphone libre")
+                .setMessage("Voulez vous emprunter ce téléphone : $name")
+                .setPositiveButton("Valider") { dialogInterface, _ ->
+                    presenter.borrowPhone(id)
+                    dialogInterface.dismiss()
+                    scannerView.resumeCameraPreview(this)
+                }
+                .setNegativeButton("Annuler") { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                    scannerView.resumeCameraPreview(this)
+                }
+                .show()
+    }
+
+    override fun onCompleted() {
+        Toast.makeText(this, "Tout s'est bien passé, vous pouvez reprendre une activité normale !", Toast.LENGTH_LONG).show()
     }
 }
 
 class MainPresenter(
-    private val view: MainView,
-    private val phoneRepository: PhoneRepository) {
+        private val view: MainView,
+        private val phoneRepository: PhoneRepository) {
 
     fun changePhoneStatus(id: String) {
         try {
@@ -114,11 +119,15 @@ class MainPresenter(
     }
 
     fun giveBack(id: String) {
-        phoneRepository.giveBack(id)
+        phoneRepository.giveBack(id, ::onCompleted)
     }
 
     fun borrowPhone(id: String) {
-        phoneRepository.borrow(id)
+        phoneRepository.borrow(id, ::onCompleted)
+    }
+
+    private fun onCompleted() {
+        view.onCompleted()
     }
 
     fun init() {
@@ -129,6 +138,7 @@ interface MainView {
     fun displayTelNotFound()
     fun displayGiveBackPop(id: String, name: String)
     fun displayBorrow(id: String, name: String)
+    fun onCompleted()
 }
 
 class PhoneRepository {
@@ -139,34 +149,71 @@ class PhoneRepository {
     init {
         val collection = strore.collection("devices")
         collection.get()
-            .addOnSuccessListener {
-                values = it.map {
-                    transformToPhone(it.data, it.id)
+                .addOnSuccessListener {
+                    values = it.map {
+                        transformToPhone(it.data, it.id)
+                    }
                 }
-            }
-            .addOnFailureListener {
-                it.printStackTrace()
-            }
+                .addOnFailureListener {
+                    it.printStackTrace()
+                }
     }
 
     private fun transformToPhone(data: Map<String, Any>, id: String): Phone {
-        return Phone(id, data.get("free") as Boolean, data.get("device") as String, data.get("os") as String)
+        return Phone(id, !(data.get("free") as Boolean), data.get("device") as String, data.get("os") as String)
     }
 
     fun getPhones(): List<Phone> {
         return values
     }
 
-    fun giveBack(id: String) {
+    fun giveBack(id: String, callback: () -> Unit) {
         val collection = strore.collection("devices")
-        collection.
+        collection.get()
+                .addOnSuccessListener {
+                    it.forEach {
+                        if (it.id == id) {
+                            val data = it.data
+                            data.put("free", true)
+                            collection.document(id)
+                                    .set(data)
+                                    .addOnCompleteListener {
+                                        callback()
+                                    }
+                        }
+                    }
+                }
+                .addOnFailureListener {
+                    it.printStackTrace()
+                }
+    }
+
+    fun borrow(id: String, callback: () -> Unit) {
+        val collection = strore.collection("devices")
+        collection.get()
+                .addOnSuccessListener {
+                    it.forEach {
+                        if (it.id == id) {
+                            val data = it.data
+                            data.put("free", false)
+                            collection.document(id)
+                                    .set(data)
+                                    .addOnCompleteListener {
+                                        callback()
+                                    }
+                        }
+                    }
+                }
+                .addOnFailureListener {
+                    it.printStackTrace()
+                }
     }
 
 }
 
 data class Phone(
-    val id: String,
-    val isBorrowed: Boolean,
+        val id: String,
+        val isBorrowed: Boolean,
         val name: String,
         val os: String
 )
