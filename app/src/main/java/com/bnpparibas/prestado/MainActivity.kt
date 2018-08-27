@@ -1,17 +1,20 @@
 package com.bnpparibas.prestado
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+
 
 class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, MainView {
 
     private lateinit var scannerView: ZXingScannerView
     private val presenter: MainPresenter by lazy {
-        MainPresenter(this, PhoneRepository())
+        MainPresenter(this, PhoneRepository(this))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +30,8 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, MainVi
     public override fun onResume() {
         super.onResume()
         scannerView.setResultHandler(this) // Register ourselves as a handler for scan results.
-        scannerView.startCamera()          // Start camera on resume
+        scannerView.startCamera()
+        presenter.init()// Start camera on resume
     }
 
     public override fun onPause() {
@@ -47,9 +51,9 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, MainVi
                 .setMessage("Nous ne trouvons pas de téléphone associé à ce code barre")
                 .setPositiveButton("Fermer") { dialogInterface, _ ->
                     dialogInterface.dismiss()
+                    scannerView.resumeCameraPreview(this)
                 }
                 .show()
-        scannerView.resumeCameraPreview(this)
     }
 
     override fun displayGiveBackPop(id: String, name: String) {
@@ -59,12 +63,13 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, MainVi
                 .setPositiveButton("Valider") { dialogInterface, _ ->
                     presenter.giveBack(id)
                     dialogInterface.dismiss()
+                    scannerView.resumeCameraPreview(this)
                 }
                 .setNegativeButton("Annuler") { dialogInterface, _ ->
                     dialogInterface.dismiss()
+                    scannerView.resumeCameraPreview(this)
                 }
                 .show()
-        scannerView.resumeCameraPreview(this)
     }
 
     override fun displayBorrow(id: String, name: String) {
@@ -74,12 +79,13 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler, MainVi
                 .setPositiveButton("Valider") { dialogInterface, _ ->
                     presenter.borrowPhone(id)
                     dialogInterface.dismiss()
+                    scannerView.resumeCameraPreview(this)
                 }
                 .setNegativeButton("Annuler") { dialogInterface, _ ->
                     dialogInterface.dismiss()
+                    scannerView.resumeCameraPreview(this)
                 }
                 .show()
-        scannerView.resumeCameraPreview(this)
     }
 }
 
@@ -107,6 +113,9 @@ class MainPresenter(
     fun borrowPhone(id: String) {
 
     }
+
+    fun init() {
+    }
 }
 
 interface MainView {
@@ -115,12 +124,38 @@ interface MainView {
     fun displayBorrow(id: String, name: String)
 }
 
-class PhoneRepository {
-    fun getPhones() = listOf(
-            Phone("vçozbuberiv", false, "tel de Rémi"),
-            Phone("qlzneofbqzbe", true, "tel de Marta"),
-            Phone("ahahrephau", false, "tel de Amael")
-    )
+class PhoneRepository(private val context: Context) {
+
+    private val strore = FirebaseFirestore.getInstance()
+    private lateinit var values: List<Phone>
+
+    init {
+        val collection = strore.collection("devices")
+        collection.get()
+                .addOnSuccessListener {
+                    values = it.map {
+                        transformToPhone(it.data, it.id)
+                    }
+                }
+                .addOnFailureListener {
+                    it.printStackTrace()
+                }
+    }
+
+    private fun transformToPhone(data: Map<String, Any>, id: String): Phone {
+        return Phone(id, data.get("free") as Boolean, data.get("device") as String)
+    }
+
+    fun getPhones(): List<Phone> {
+        return values
+    }
+
+    private fun doNothingWith(it: MutableMap<String, Any>) {
+        val id = it.get("id")
+        val name = it.get("name")
+        val free = it.get("free")
+        val zob = it.get("zob")
+    }
 }
 
 data class Phone(

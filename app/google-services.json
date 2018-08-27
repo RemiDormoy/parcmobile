@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "881545350148",
+    "firebase_url": "https://prestado-470c9.firebaseio.com",
+    "project_id": "prestado-470c9",
+    "storage_bucket": "prestado-470c9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:881545350148:android:5445da65eb1f156d",
+        "android_client_info": {
+          "package_name": "com.bnpparibas.prestado"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "881545350148-sdpblen1g9f39b77r2uiht43e4pp84tk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbaCbK7LrR5AxATtvvLeGc2XT_LWjyvz0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
