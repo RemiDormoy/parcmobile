@@ -25,7 +25,7 @@ class UsersActivity : AppCompatActivity(), UsersView {
         UsersPresenter(UsersRepository(), this)
     }
 
-    private val adapter = UsersAdpter()
+    private val adapter = UsersAdpter(::addUser)
 
     companion object {
 
@@ -42,6 +42,10 @@ class UsersActivity : AppCompatActivity(), UsersView {
 
     override fun displayUsers(users: List<Users>) {
         adapter.updateList(users)
+    }
+
+    private fun addUser() {
+        startActivity(Intent(this, AddUserActivity::class.java))
     }
 }
 
@@ -103,22 +107,38 @@ data class Users(
         val level: String
 )
 
-class UsersAdpter : RecyclerView.Adapter<UsersViewHolder>() {
+class UsersAdpter(private val addUserClick: () -> Unit) : RecyclerView.Adapter<UsersViewHolder>() {
 
     private var list = listOf<Users>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsersViewHolder {
+        if (viewType == 12) {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.button_add_user, parent, false)
+            return UsersViewHolder(view)
+        }
         val view = LayoutInflater.from(parent.context).inflate(R.layout.cell_user_item, parent, false)
         return UsersViewHolder(view)
     }
 
+    override fun getItemViewType(position: Int): Int {
+        if (position == list.size) return 12
+        return super.getItemViewType(position)
+    }
+
     override fun getItemCount(): Int {
+        if (list.size > 0) {
+            return list.size + 1
+        }
         return list.size
     }
 
     override fun onBindViewHolder(holder: UsersViewHolder, position: Int) {
-        holder.itemView.findViewById<TextView>(R.id.textView2).text = list[position].name
-        holder.itemView.findViewById<TextView>(R.id.textView3).text = list[position].level
+        if (position == list.size) {
+            holder.itemView.setOnClickListener { addUserClick() }
+        } else {
+            holder.itemView.findViewById<TextView>(R.id.textView2).text = list[position].name
+            holder.itemView.findViewById<TextView>(R.id.textView3).text = list[position].level
+        }
     }
 
     fun updateList(list: List<Users>) {
@@ -127,4 +147,4 @@ class UsersAdpter : RecyclerView.Adapter<UsersViewHolder>() {
     }
 }
 
-class UsersViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
+class UsersViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
